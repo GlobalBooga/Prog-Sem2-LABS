@@ -3,32 +3,51 @@ using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.LowLevel;
 
 public class PlayerController : MonoBehaviour
 {
-    PlayerAction inputAction;
-    Vector2 move;
+    public Vector3 moveDirection;
+    public Vector2 rawIpnut => inputAction.Player.Move.ReadValue<Vector2>();
+
     Vector2 rotate;
     Rigidbody rb;
     CapsuleCollider cc;
+    public Transform rotator;
+    public Transform cameraHolder;
 
     public float jump = 5f;
     public float walkSpeed = 5f;
-    public Camera playerCamera;
     Vector3 cameraRotation;
 
     public LayerMask whatIsGround;
 
+    PlayerAction inputAction;
     public Animator playerAnimator;
     private bool isWalking = false;
 
+    public Vector2 MouseDelta => inputAction.Player.Look.ReadValue<Vector2>();
+
     bool IsGrounded => Physics.Raycast(cc.bounds.min, Vector3.down, 0.2f, whatIsGround);
+
+
+    public void SetBodyRotation()
+    {
+        if (rotator) rotator.rotation = Quaternion.LookRotation(moveDirection, transform.up);
+    }
 
     private void Awake() {
         inputAction = new PlayerAction();
 
-        inputAction.Player.Move.performed += cntxt => move = cntxt.ReadValue<Vector2>();
-        inputAction.Player.Move.canceled += cntxt => move = Vector2.zero;
+        /*inputAction.Player.Move.performed += cntxt =>
+        {
+            Vector2 inputDir = cntxt.ReadValue<Vector2>();
+            //moveDirection = cameraHolder.forward * inputDir.y + cameraHolder.right * inputDir.x;
+            //moveDirection = new Vector3(inputDir.x, 0f, inputDir.y);
+
+            if (rotator)  ;
+        };*/
+        inputAction.Player.Move.canceled += cntxt => moveDirection = Vector2.zero;
 
         inputAction.Player.Jump.performed += cntxt => TryJump();
 
@@ -45,12 +64,13 @@ public class PlayerController : MonoBehaviour
 
     private void Update() 
     {
+        Debug.Log(DistanceToGround());
 
     }
 
     private void FixedUpdate()
     {
-        if (IsGrounded) rb.AddForce(move * walkSpeed, ForceMode.Force);
+        if (IsGrounded) rb.AddForce(moveDirection * walkSpeed, ForceMode.Force);
     }
 
     private void OnDisable() 
@@ -68,7 +88,7 @@ public class PlayerController : MonoBehaviour
         rb.AddForce(Vector3.up * jump, ForceMode.Impulse);
     }
 
-    private float distanceToGround()
+    private float DistanceToGround()
     {
         RaycastHit hit;
         if (Physics.Raycast(cc.bounds.min, Vector3.down, out hit, 1000f, whatIsGround))
