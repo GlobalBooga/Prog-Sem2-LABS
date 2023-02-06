@@ -26,6 +26,8 @@ public class PlayerController : MonoBehaviour
     public Animator playerAnimator;
     private bool isWalking = false;
 
+    public Gun gun;
+
     public Vector2 MouseDelta => inputAction.Player.Look.ReadValue<Vector2>();
 
     bool IsGrounded => Physics.Raycast(cc.bounds.min, Vector3.down, 0.2f, whatIsGround);
@@ -51,6 +53,8 @@ public class PlayerController : MonoBehaviour
 
         inputAction.Player.Jump.performed += cntxt => TryJump();
 
+        //inputAction.Player.Shoot.performed += cntxt => gun.Shoot();
+        //inputAction.Player.Aim.performed += cntxt => gun.Aim();
 
         rb = GetComponent<Rigidbody>();
         cc = GetComponent<CapsuleCollider>();
@@ -64,13 +68,14 @@ public class PlayerController : MonoBehaviour
 
     private void Update() 
     {
-        Debug.Log(DistanceToGround());
+        //Debug.Log(DistanceToGround());
 
     }
 
     private void FixedUpdate()
     {
-        if (IsGrounded) rb.AddForce(moveDirection * walkSpeed, ForceMode.Force);
+        rb.AddForce(moveDirection * walkSpeed, ForceMode.Force);
+        //Debug.Log(IsGrounded +"   "+ moveDirection);
     }
 
     private void OnDisable() 
@@ -80,7 +85,7 @@ public class PlayerController : MonoBehaviour
 
     private void TryJump()
     {
-        if (IsGrounded) Jump();
+        if (DistanceToGround() == 0) Jump();
     }
 
     private void Jump()

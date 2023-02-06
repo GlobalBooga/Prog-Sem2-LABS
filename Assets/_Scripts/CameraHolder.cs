@@ -21,8 +21,13 @@ public class CameraHolder : MonoBehaviour
         Vector2 mouseMove = player.MouseDelta * sensitivity * Time.deltaTime;
 
         transform.position = player.transform.position + cameraHolderOffset;
-        transform.rotation = Quaternion.Euler(transform.rotation.eulerAngles + new Vector3(-mouseMove.y, mouseMove.x, 0f));
-
+        Quaternion mouseRot = Quaternion.Euler(-mouseMove.y, mouseMove.x, 0f);
+        
+        Vector3 newRot = transform.rotation.eulerAngles + mouseRot.eulerAngles;
+        //newRot = new Vector3(Mathf.Clamp(newRot.x, 0f, 50f), newRot.y, 0f);
+        //Debug.Log(newRot);
+        transform.rotation = Quaternion.Euler(newRot);
+        
         player.moveDirection = transform.forward * player.rawIpnut.y + transform.right * player.rawIpnut.x;
      
         player.SetBodyRotation();
