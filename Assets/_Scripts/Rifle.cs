@@ -4,18 +4,18 @@ using UnityEngine;
 
 public class Rifle : Gun
 {
-    internal override void Start()
-    {
-        base.Start();
-    }
-
-    internal override void Update()
-    {
-        base.Update();
-    }
+    public float firerate;
 
     internal override void Shoot()
     {
-
+        //StartCoroutine(nameof(RapidFire));
     }
+
+    //IEnumerator RapidFire()
+    //{
+    //    while (player.inputAction.Player.Shoot)
+    //    {
+    //
+    //    }
+    //}
 }

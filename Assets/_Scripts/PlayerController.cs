@@ -22,11 +22,11 @@ public class PlayerController : MonoBehaviour
 
     public LayerMask whatIsGround;
 
-    PlayerAction inputAction;
+    public PlayerAction inputAction;
     public Animator playerAnimator;
     private bool isWalking = false;
 
-    public Gun gun;
+    public List<Gun> guns;
 
     public Vector2 MouseDelta => inputAction.Player.Look.ReadValue<Vector2>();
 
@@ -53,7 +53,13 @@ public class PlayerController : MonoBehaviour
 
         inputAction.Player.Jump.performed += cntxt => TryJump();
 
-        //inputAction.Player.Shoot.performed += cntxt => gun.Shoot();
+        inputAction.Player.Shoot.performed += cntxt =>
+        {
+            foreach (var gun in guns)
+            {
+                gun.Shoot();
+            }
+        };
         //inputAction.Player.Aim.performed += cntxt => gun.Aim();
 
         rb = GetComponent<Rigidbody>();
