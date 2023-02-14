@@ -24,6 +24,8 @@ public class PlayerController : MonoBehaviour
     public Animator playerAnimator;
     private bool isWalking = false;
 
+    private bool challenge;
+
     public List<Gun> guns;
 
     public Vector2 MouseDelta => inputAction.Player.Look.ReadValue<Vector2>();
@@ -58,6 +60,7 @@ public class PlayerController : MonoBehaviour
                 gun.Shoot();
             }
         };
+        
         //inputAction.Player.Aim.performed += cntxt => gun.Aim();
 
         rb = GetComponent<Rigidbody>();
@@ -105,5 +108,15 @@ public class PlayerController : MonoBehaviour
             return Vector3.Distance(transform.position, hit.transform.position);
         }
         return 0f;
+    }
+
+
+    private void OnTriggerStay(Collider other)
+    {
+        if (other.gameObject.layer == LayerMask.NameToLayer("Challenger") &&
+            inputAction.Player.Interact.ReadValue<float>() == 1)
+        {
+            GameplayManager.StartDuel(other.transform.GetComponent<NPC>());
+        }
     }
 }
