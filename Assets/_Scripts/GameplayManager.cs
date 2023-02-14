@@ -7,7 +7,7 @@ public class GameplayManager : MonoBehaviour
 {
     public TextMeshProUGUI countDown;
     public List<NPC> npcs;
-    public static PlayerController player;
+    public static PlayerController player = null;
     public static int matchesWon;
     public static int matchesLost;
     public static int winStreak;
