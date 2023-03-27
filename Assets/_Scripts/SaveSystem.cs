@@ -7,6 +7,8 @@ public class SaveSystem : MonoBehaviour
     private void Awake()
     {
         playerData = LoadGameData();
+        GameObject.Find("Player").transform.position = playerData.playerPosition;
+        GameObject.Find("Player").transform.rotation = playerData.playerRotation;
     }
 
     private void OnApplicationQuit()
