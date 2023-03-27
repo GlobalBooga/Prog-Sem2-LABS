@@ -22,9 +22,9 @@ public class SaveSystem : MonoBehaviour
     public void Save(PlayerData playerData)
     {
         string data = JsonUtility.ToJson(playerData);
-        //File.Decrypt(Application.persistentDataPath + "/PlayerData.json");
+        File.Decrypt(Application.persistentDataPath + "/PlayerData.json");
         File.WriteAllText(Application.persistentDataPath + "/PlayerData.json", data);
-        //File.Encrypt(Application.persistentDataPath + "/PlayerData.json");
+        File.Encrypt(Application.persistentDataPath + "/PlayerData.json");
     }
 
     public PlayerData LoadGameData()
@@ -36,10 +36,10 @@ public class SaveSystem : MonoBehaviour
             Save(new PlayerData());
         }
 
-        //File.Decrypt(Application.persistentDataPath + "/PlayerData.json");
+        File.Decrypt(Application.persistentDataPath + "/PlayerData.json");
         string savedData = File.ReadAllText(Application.persistentDataPath + "/PlayerData.json");
         PlayerData data = JsonUtility.FromJson<PlayerData>(savedData);
-        //File.Decrypt(Application.persistentDataPath + "/PlayerData.json");
+        File.Decrypt(Application.persistentDataPath + "/PlayerData.json");
 
         return data;
     }
