@@ -1,13 +1,18 @@
+using System;
 using System.IO;
 using UnityEngine;
 
 public class SaveSystem : MonoBehaviour
 {
     PlayerData playerData;
+    string key = "1235153";
+    bool encrypted = false;
+    
 
-    private void Awake()
+    private void Start()
     {
         playerData = LoadGameData();
+        if (playerData == null) playerData = new PlayerData();
         GameObject.Find("Player").transform.position = playerData.playerPosition;
         GameObject.Find("Player").transform.rotation = playerData.playerRotation;
     }
@@ -21,10 +26,12 @@ public class SaveSystem : MonoBehaviour
 
     public void Save(PlayerData playerData)
     {
+        string path = Application.persistentDataPath + "/PlayerData.json";
+
         string data = JsonUtility.ToJson(playerData);
-        File.Decrypt(Application.persistentDataPath + "/PlayerData.json");
-        File.WriteAllText(Application.persistentDataPath + "/PlayerData.json", data);
-        File.Encrypt(Application.persistentDataPath + "/PlayerData.json");
+        XORData(data);
+        File.WriteAllText(path, data);
+        encrypted = true;
     }
 
     public PlayerData LoadGameData()
@@ -33,14 +40,33 @@ public class SaveSystem : MonoBehaviour
 
         if (!File.Exists(path))
         {
+            encrypted = false;
             Save(new PlayerData());
         }
+        
+        string savedData = File.ReadAllText(path);
 
-        File.Decrypt(Application.persistentDataPath + "/PlayerData.json");
-        string savedData = File.ReadAllText(Application.persistentDataPath + "/PlayerData.json");
+        if (encrypted)
+        {
+            savedData = XORData(savedData);
+            encrypted = false;
+        }
+
         PlayerData data = JsonUtility.FromJson<PlayerData>(savedData);
-        File.Decrypt(Application.persistentDataPath + "/PlayerData.json");
+
+        File.WriteAllText(path, XORData(savedData));
+        encrypted = true;
 
         return data;
+    }
+
+    string XORData(string data)
+    {
+        string result = "";
+        for (int i = 0; i < data.Length; i++)
+        {
+            result += (char)(data[i] ^ key[i%key.Length]);
+        }
+        return result;
     }
 }
